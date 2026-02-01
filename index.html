@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valentine for Ana 💘</title>
+
+  <style>
+    :root{
+      --bg:#fff0f6;
+      --card:#ffffff;
+      --text:#2b2b2b;
+      --yes:#ff4d88;
+      --no:#ffd1e1;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #ffe0ee, var(--bg));
+      color:var(--text);
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .card{
+      width:min(520px, 100%);
+      background:var(--card);
+      border-radius:20px;
+      padding:24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.10);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    h1{
+      margin:10px 0 14px;
+      font-size: clamp(22px, 4.5vw, 34px);
+    }
+
+    p{
+      margin:0 0 16px;
+      opacity:.85;
+      font-size:16px;
+    }
+
+    img{
+      width:min(320px, 85%);
+      height:auto;
+      border-radius:18px;
+      display:block;
+      margin: 12px auto 18px;
+    }
+
+    .btn-row{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    button{
+      border:0;
+      padding:14px 18px;
+      border-radius:14px;
+      font-weight:700;
+      font-size:16px;
+      cursor:pointer;
+      min-width:140px;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    #yesBtn{
+      background:var(--yes);
+      color:white;
+    }
+
+    #noBtn{
+      background:var(--no);
+      color:#7a1230;
+      position:relative;
+    }
+
+    .hidden{
+      display:none;
+    }
+
+    .yay h1{
+      color:#ff2f78;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 💌 FIRST SCREEN -->
+  <main id="ask" class="card">
+    <p>💘 For Ana</p>
+    <h1>Will you be my Valentine?</h1>
+
+    <!-- IMAGE 1 (put ask.jpg in same folder) -->
+    <img src="Ana1.JPG" alt="cute picture" />
+
+    <div class="btn-row">
+      <button id="yesBtn">Yes 💖</button>
+      <button id="noBtn">No 🙃</button>
+    </div>
+
+    <p id="plea"></p>
+  </main>
+
+
+  <!-- 🎉 SECOND SCREEN -->
+  <main id="yay" class="card yay hidden">
+    <h1>YAYYYYY 😭💗</h1>
+    <p>I am so lucky ❤️</p>
+
+    <!-- IMAGE 2 (put yay.jpg in same folder) -->
+    <img src="Ana2.JPG" alt="yay picture" />
+
+    <h2>I love you, amor 💘</h2>
+  </main>
+
+
+  <script>
+    const ask = document.getElementById("ask");
+    const yay = document.getElementById("yay");
+
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+
+    const plea = document.getElementById("plea");
+
+    let noClicks = 0;
+
+    // Funny NO button messages
+    const noMessages = [
+      "No 🙃",
+      "Are you sure?? 🤨",
+      "Amor… 😭",
+      "Ana pls 😩",
+      "Don’t do this to me 💔",
+      "Don't tease meeeeee",
+      "Okay rude 😤",
+      "😩😩",
+      "YES is the only option 💖"
+    ];
+
+    // Messages underneath
+    const pleaMessages = [
+      "",
+      "Think carefully 😳",
+      "Amor you're breaking my heart…",
+      "I am stressedddd 😭",
+      "Amorrrrrrrr",
+    ];
+
+    function moveNoButton() {
+      noClicks++;
+
+      // Update NO button text
+      noBtn.textContent =
+        noMessages[Math.min(noClicks, noMessages.length - 1)];
+
+      // Update message underneath
+      plea.textContent =
+        pleaMessages[Math.min(noClicks, pleaMessages.length - 1)];
+
+      // ✅ ONLY YES grows bigger (NO does NOT shrink)
+      yesBtn.style.transform = `scale(${1 + noClicks * 0.10})`;
+
+      // Move NO button randomly (same size)
+      const cardRect = ask.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const padding = 20;
+      const maxX = cardRect.width - btnRect.width - padding;
+      const maxY = cardRect.height - btnRect.height - padding;
+
+      const x = Math.floor(Math.random() * maxX) + padding / 2;
+      const y = Math.floor(Math.random() * maxY) + padding / 2;
+
+      noBtn.style.position = "absolute";
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+
+      // After too many tries: disable NO
+      if (noClicks >= 8) {
+        noBtn.disabled = true;
+        noBtn.textContent = "Nice try 😘";
+        plea.textContent = "The answer is YES 💍";
+      }
+    }
+
+    // Desktop hover makes NO run away
+    noBtn.addEventListener("mouseenter", moveNoButton);
+
+    // Mobile tap also makes it run away
+    noBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      moveNoButton();
+    });
+
+    // YES button success screen
+    yesBtn.addEventListener("click", () => {
+      ask.classList.add("hidden");
+      yay.classList.remove("hidden");
+      heartConfetti();
+    });
+
+    // Little heart celebration
+    function heartConfetti() {
+      const hearts = ["💗","💖","💘","💕","💞"];
+
+      for (let i = 0; i < 20; i++) {
+        const h = document.createElement("div");
+        h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+
+        h.style.position = "fixed";
+        h.style.left = Math.random() * 100 + "vw";
+        h.style.top = "-5vh";
+        h.style.fontSize = (18 + Math.random() * 20) + "px";
+        h.style.transition = "transform 1.5s ease, opacity 1.5s ease";
+        h.style.zIndex = 9999;
+
+        document.body.appendChild(h);
+
+        requestAnimationFrame(() => {
+          h.style.transform =
+            `translateY(${110 + Math.random() * 20}vh) rotate(${Math.random() * 360}deg)`;
+          h.style.opacity = "0";
+        });
+
+        setTimeout(() => h.remove(), 1600);
+      }
+    }
+  </script>
+
+</body>
+</html>
